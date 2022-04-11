@@ -57,8 +57,8 @@ var createTaskEl = function (taskDataObj) {
     tasks.push(taskDataObj);
     //increase task counter for next unique id
     taskIdCounter++;
-    console.log(taskDataObj);
-    console.log(taskDataObj.status);
+   
+    saveTasks();
 };
 
 var createTaskActions = function (taskId) {
@@ -117,6 +117,7 @@ var completeEditTask = function (taskName, taskType, taskId) {
 
     formEl.removeAttribute("data-task-id");
     document.querySelector("#save-task").textContent = "Add Task";
+    saveTasks();
 }
 
 var deleteTask = function (taskId) {
@@ -133,6 +134,7 @@ var deleteTask = function (taskId) {
     }
     //reassign tasks array to be the same as updatedTaskArr
     tasks = updatedTaskArr;
+    saveTasks();
 };
 var editTask = function (taskId) {
     //get task list item element
@@ -184,15 +186,41 @@ var taskStatusChangeHandler = function (event) {
     else if (statusValue === "completed") {
         tasksCompletedEl.appendChild(taskSelected);
     }
-    for (var i = 0) ; i < tasks.length; i++){
+    for (var i = 0; i < tasks.length; i++){
         if (tasks[i].id === parseInt(taskId)) {
             tasks[i].status = statusValue;
         }
     }
+    saveTasks();
   };
 
-    
+var saveTasks = function () {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
+var loadTasks = function () {
+    //get task items from localStorage
+    var savedTasks = localStorage.getItem("tasks");
+ 
+    if (!savedTasks) {
+        return false;
+    }
+    //convert tasks from string format back into an array of objects
+    tasks = JSON.parse(tasks);
+    //iterate through a task array and create task elements on the page from it
+    for (var i = 0; i < savedTasks.length; i++);
+    createTaskEl(savedTasks[i]);
+  
+
+    var listItemEl = document.createElement("li");
+    listItemEl.className = "task-item";
+    //add task id as a custom attribute
+    listItemEl.setAttribute("data-task-id", task[i].id);
+    //create div to hold task info and add to list item
+   
+}
 formEl.addEventListener("submit", taskFormHandler);
 //for the edit and delete buttons
 pageContentEl.addEventListener("click", taskButtonHandler);
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+loadTasks();
