@@ -14,15 +14,26 @@ var taskFormHandler = function (event) {
     }
 
     formEl.reset();
-    //package up data as an object
-    var taskDataObj = {
-        name: taskNameInput,
-        type: taskTypeInput,
-    };
-    createTaskEl(taskDataObj);
-
+    var isEdit = formEl.hasAttribute("data-task-id");
+  
+    //has data attribute, so get task id and call function to complete edit process
+    if (isEdit) {
+        var taskId = formEl.getAttribute("data-task-id");
+        completeEditTask(taskNameInput, taskTypeInput, taskId);
+    }
+    //no data attribute so create object as normal and pass to createTaskel function
+    else {
+        //package up data as an object
+        var taskDataObj = {
+            name: taskNameInput,
+            type: taskTypeInput
+        };
+        createTaskEl(taskDataObj);
+    }
 };
-    
+var completeEditTask = function (taskName, taskType, taskId) {
+    console.log(taskName, taskType, taskId);
+}    
     
 var createTaskEl = function (taskDataObj) {
     //create list item
@@ -103,6 +114,8 @@ var editTask = function (taskId) {
     document.querySelector("select[name='task-type']").value = taskType;
 
     formEl.setAttribute("data-task-id", taskId);
+    //Change button text to "Save Task" once something is edited
+    document.querySelector("#save-task").textContent = "Save Task";
 };
 var taskButtonHandler = function (event) {
     //get target element from event
